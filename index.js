@@ -32,9 +32,11 @@ const userData = [{ email: "admin@example.com" }, { email: "user@example.com" }]
 })()
 
 //
-app.get("/", async (req, res) => {
-        const allpoints = await Aqmpoint.find();
-	res.render("index", { people: allpoints });
+app.get("/:userId?", async (req, res) => {
+    const query = req.params.userId ? {user: req.params.userId} : {}
+        const allpoints = await Aqmpoint.find(query).populate("user");
+        let users = await User.find()
+	res.render("index", { allpoints, users });
 });
      
 console.log('hallo from backend');
