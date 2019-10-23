@@ -2,6 +2,7 @@ const app = require('express')();
 const path = require("path");
 const mongoose = require("mongoose");
 const Aqmpoint = require("./Aqmpoint");
+const aqmData = require("./out3.json");
 
 
 mongoose.connect("mongodb://localhost:27017/airquality", {
@@ -10,9 +11,27 @@ mongoose.connect("mongodb://localhost:27017/airquality", {
     useUnifiedTopology: true
 });
 
+
 app.set("views",path.join(__dirname,"views"))
 app.set("view engine","hbs");
+const User = require("./models/User");
+const userData = [{ email: "admin@example.com" }, { email: "user@example.com" }];
 
+//
+(async () => {
+  await Aqmpoint.deleteMany();
+  await User.deleteMany();
+  
+  const createdUser = await User.insertMany(userData);
+
+  aqmData.map(i => i.user =createdUser[Math.floor(Math.random() * createdUser.length)]._id)
+  //TODO map over all the aqmData and asign each row a random user id from created user
+ 
+  const createdPoints = await Aqmpoint.insertMany(aqmData);
+  //TODO save the enriched apqData to DB
+})()
+
+//
 app.get("/", async (req, res) => {
         const allpoints = await Aqmpoint.find();
 	res.render("index", { people: allpoints });

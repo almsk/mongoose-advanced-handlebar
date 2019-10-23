@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const AirqualitySchema = new mongoose.Schema({
+    user: { type: mongoose.Schema.ObjectId, ref: "User" },
     aqm: {
         r3000: Number,
         r5000: Number,
